@@ -2,6 +2,12 @@
 
 Create files using any template engine as simple as possible. Just a template and a JSON file is enough.
 
+# Usage
+
+```
+$ npx measy README.hbs
+```
+
 # Install
 
 Install `measy` using `npm` or `yarn`.

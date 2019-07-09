@@ -5,7 +5,8 @@
   "description": "Create files using any template engine as simple as possible. Just a template and a JSON file is enough.",
   "keywords": [
     "template",
-    "generator"
+    "generator",
+    "creator"
   ],
   "engines": {
     "node": ">=10.8.0"
