@@ -1,0 +1,13 @@
+---
+rootContext: ["../member.json"]
+context: ["../package.json", "../data-ts.ts", "../data-js.js"]
+partials: ["partials"]
+extension: "txt"
+---
+name:{{ name }}
+package.name:{{ package.name }}
+version:{{ version }}
+package.version:{{ package.version }}
+member:{{member}}
+data-ts.color:{{dataTs.color}}
+data-js.color:{{dataJs.color}}

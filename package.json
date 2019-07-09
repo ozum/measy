@@ -1,0 +1,83 @@
+{
+  "name": "measy",
+  "label": "Measy",
+  "version": "0.0.1",
+  "description": "Create files using any template engine as simple as possible. Just a template and a JSON file is enough.",
+  "keywords": [
+    "template",
+    "generator"
+  ],
+  "engines": {
+    "node": ">=10.8.0"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "measy": "dist/bin/measy.js"
+  },
+  "files": [
+    "/bin",
+    "/lib/**/!(*.spec|*.test)*.*",
+    "/dist/**/!(*.spec|*.test)*.*",
+    "/@types",
+    "/module-files"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "docs:build": "ts-node src/bin/measy.ts README.njk",
+    "lint": "eslint --ignore-path .gitignore --cache 'src/**/*.+(js|jsx|ts|tsx|vue)'",
+    "format": "prettier --write --config .prettierrc --check 'src/**/*.+(js|jsx|json|less|css|ts|tsx|md|vue|gql)'",
+    "test": "NODE_ENV=test jest --coverage",
+    "prepublishOnly": "npm run build",
+    "prerelease": "npm-run-all -p lint test format docs:build",
+    "release": "(git diff --quiet && git diff --staged --quiet || git commit -am 'format code') && git checkout master && git pull origin master && git push --follow-tags origin master && npm publish"
+  },
+  "repository": "ozum/measy",
+  "author": "Özüm Eldoğan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ozum/measy/issues"
+  },
+  "homepage": "https://github.com/ozum/measy#readme",
+  "devDependencies": {
+    "@types/consolidate": "^0.14.0",
+    "@types/handlebars": "^4.1.0",
+    "@types/jest": "^24.0.15",
+    "@types/json5": "0.0.30",
+    "@types/lodash.camelcase": "^4.3.6",
+    "@types/meow": "^5.0.0",
+    "@types/node": "^12.0.10",
+    "@types/nunjucks": "^3.1.1",
+    "@types/prettier": "^1.16.4",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
+    "dir-compare": "^1.7.3",
+    "eslint": "^6.0.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jest": "^22.7.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.8.0",
+    "mustache": "^3.0.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.17.1",
+    "ts-jest": "^24.0.2",
+    "ts-node-dev": "^1.0.0-pre.39",
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "array-map-to-object": "0.0.3",
+    "consolidate": "^0.15.1",
+    "del": "^5.0.0",
+    "front-matter": "^3.0.2",
+    "globby": "^10.0.0",
+    "handlebars": "^4.1.2",
+    "json5": "^2.1.0",
+    "lodash.camelcase": "^4.3.0",
+    "make-dir": "^3.0.0",
+    "mem": "^5.1.1",
+    "meow": "^5.0.0",
+    "nunjucks": "^3.2.0"
+  }
+}

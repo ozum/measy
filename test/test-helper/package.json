@@ -1,0 +1,8 @@
+{
+  "name": "some-module",
+  "version": "1.0.0",
+  "objectData": {
+    "id": 1,
+    "itemName": "pen"
+  }
+}

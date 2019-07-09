@@ -1,0 +1,4 @@
+name:George
+package.name:
+version:
+package.version:
