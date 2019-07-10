@@ -66,6 +66,16 @@ Examples
   $ measy --out docs my-templates
 `;
 
+/**
+ * Splites CSV string of paths from CLI into array of absolute paths.
+ *
+ * @param pathsCSV is comma split values of paths to split.
+ * @returns array of absolute paths converted from relative to cwd().
+ */
+function splitPaths(pathsCSV: string): string[] {
+  return pathsCSV ? pathsCSV.split(/\s*,\s*/).map(f => resolve(f)) : [];
+}
+
 async function measy(): Promise<void> {
   const cli = meow(HELP, { flags: FLAGS }) as Result;
   const path = cli.input[0];
@@ -78,10 +88,10 @@ async function measy(): Promise<void> {
   const flags = {
     ...cli.flags,
     context: JSON5.parse(cli.flags.context) as Record<string, any>,
-    contextFiles: cli.flags.contextFiles.split(/\s*,\s*/).map(f => resolve(f)),
-    rootContextFiles: cli.flags.rootContextFiles.split(/\s*,\s*/).map(f => resolve(f)),
-    partialDirs: cli.flags.partialDirs.split(/\s*,\s*/).map(f => resolve(f)),
-    excludePaths: cli.flags.excludePaths.split(/\s*,\s*/).map(f => resolve(f)),
+    contextFiles: splitPaths(cli.flags.contextFiles),
+    rootContextFiles: splitPaths(cli.flags.rootContextFiles),
+    partialDirs: splitPaths(cli.flags.partialDirs),
+    excludePaths: splitPaths(cli.flags.excludePaths),
   };
 
   try {
