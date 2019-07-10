@@ -52,6 +52,7 @@
     "@types/prettier": "^1.16.4",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
+    "del": "^5.0.0",
     "dir-compare": "^1.7.3",
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^13.1.0",
@@ -70,7 +71,6 @@
   "dependencies": {
     "array-map-to-object": "0.0.3",
     "consolidate": "^0.15.1",
-    "del": "^5.0.0",
     "front-matter": "^3.0.2",
     "globby": "^10.0.0",
     "handlebars": "^4.1.2",
