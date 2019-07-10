@@ -13,12 +13,15 @@ import { arrify, requireContextSource } from "../utils";
  * readContext("some/path/my-data.js", false); // { name: "abc" }
  * readContext("some/path/my-data.js", true);  // { myData: { name: "abc" } }
  */
-export function readContext(sources?: string | string[], isRootObject?: boolean): Record<string, any> {
-  return arrify(sources || []).reduce((context, source) => {
-    const currentContext = requireContextSource(source);
-    const key = camelCase(basename(source, extname(source)));
-    return isRootObject ? { ...context, ...currentContext } : { ...context, [key]: currentContext };
-  }, {});
+async function readContext(sources?: string | string[], isRootObject?: boolean): Promise<Record<string, any>> {
+  const parsedSources = await Promise.all(
+    arrify(sources || []).map(async source => {
+      const parsedSource = await requireContextSource(source);
+      const key = camelCase(basename(source, extname(source)));
+      return isRootObject ? parsedSource : { [key]: parsedSource };
+    })
+  );
+  return parsedSources.reduce((context, currentContext) => ({ ...context, ...currentContext }), {});
 }
 
 export default memoize(readContext, { maxAge: 10000 });

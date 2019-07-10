@@ -42,8 +42,8 @@ async function processMetaDataFromFile(file: string): Promise<MetaData> {
   const result: MetaData = {
     partialDirs: attributes.partials ? arrify(attributes.partials).map(partial => join(dirname(file), partial)) : [],
     context: {
-      ...readContext(toAbsolute(file, attributes.context), false),
-      ...readContext(toAbsolute(file, attributes.rootContext), true),
+      ...(await readContext(toAbsolute(file, attributes.context), false)),
+      ...(await readContext(toAbsolute(file, attributes.rootContext), true)),
     },
     body,
     extension: attributes.extension,

@@ -13,7 +13,7 @@ const getDifferenceOfDirs = (path1: string, path2: string): Promise<number> =>
   }).then(comparison => comparison.differences);
 
 afterAll(async () => {
-  await del(join(__dirname, "test-helper/temp-out"));
+  // await del(join(__dirname, "test-helper/temp-out"));
   await del(join(__dirname, "test-helper/handlebars/sub-dir-template/hello"));
 });
 
@@ -56,6 +56,42 @@ describe("render", () => {
     const rendered = await render({ template: join(__dirname, "test-helper/mustache/doc.mustache"), context: { name: "George" } });
     const expected = await getExpected("basic-render.txt");
     expect(rendered).toBe(expected);
+  });
+
+  it("should render by parsing JSON5 file without file extension", async () => {
+    const rendered = await render({
+      template: join(__dirname, "test-helper/handlebars/doc.hbs"),
+      rootContextFiles: join(__dirname, "test-helper/data-json"),
+    });
+    const expected = "name:json5\npackage.name:\nversion:\npackage.version:\n";
+    expect(rendered).toBe(expected);
+  });
+
+  it("should render by parsing YAML file without file extension", async () => {
+    const rendered = await render({
+      template: join(__dirname, "test-helper/handlebars/doc.hbs"),
+      rootContextFiles: join(__dirname, "test-helper/data-yaml"),
+    });
+    const expected = "name:yaml\npackage.name:\nversion:\npackage.version:\n";
+    expect(rendered).toBe(expected);
+  });
+
+  it("should throw when parsing malformed YAML file without file extension", async () => {
+    await expect(
+      render({
+        template: join(__dirname, "test-helper/handlebars/doc.hbs"),
+        rootContextFiles: join(__dirname, "test-helper/data-yaml-malformed"),
+      })
+    ).rejects.toThrow("Cannot parse data as JSON5 or YAML");
+  });
+
+  it("should throw for unsupported type of files.", async () => {
+    await expect(
+      render({
+        template: join(__dirname, "test-helper/handlebars/doc.hbs"),
+        rootContextFiles: join(__dirname, "test-helper/xyz.xyz"),
+      })
+    ).rejects.toThrow("files are not supported");
   });
 });
 

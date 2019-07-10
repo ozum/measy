@@ -1,10 +1,15 @@
 import { join } from "path";
 import { readContext, replaceExtension, getFilePathsRecursively, getTemplateFilesFromDir } from "../src/utils";
 
+function sort(data: any): any {
+  return { allPartialDirs: data.allPartialDirs.sort(), templateFiles: data.templateFiles.sort() };
+}
+
 describe("utils", () => {
   describe("readContext", () => {
-    it("should return if sources are undfined.", () => {
-      expect(readContext()).toEqual({});
+    it("should return if sources are undfined.", async () => {
+      const expected = await readContext();
+      expect(expected).toEqual({});
     });
   });
 
@@ -44,7 +49,7 @@ describe("utils", () => {
         dir: join(__dirname, "test-helper/handlebars"),
         templateExtension: "hbs",
       });
-      expect(files).toEqual(expected);
+      expect(sort(files)).toEqual(sort(expected));
     });
 
     it("should return template files and partial dirs using relative dir.", async () => {
@@ -68,7 +73,7 @@ describe("utils", () => {
         templateExtension: "hbs",
         partialDirs: ["partials", "partials2"],
       });
-      expect(files).toEqual(expected);
+      expect(sort(files)).toEqual(sort(expected));
     });
   });
 });

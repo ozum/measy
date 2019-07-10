@@ -32,10 +32,10 @@ $ yarn add measy
 $ measy README.njk
 ```
 
-- Long syntax without Front Matter:
+- without Front Matter, load data from `package.json` and `foo.yaml`
 
 ```
-$ measy --context-files package.json --out README.md README.njk
+$ measy --context-files package.json,foo.yaml --out README.md README.njk
 ```
 
 - Create a text file from handlebars template:
@@ -94,12 +94,12 @@ extension: "md"
 
 ```
 
-| Name        | Type              | Description                                                                                                                               |
-| ----------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| context     | `string|string[]` | File name or array of file names to require to get context data for template. File name without extension is used as key in context data. |
-| rootContext | `string|string[]` | File name or array of file names to require to get context data for template. Result is merged into context directly.                     |
-| extension   | `string`          | If there is no out attribute, sets filename extension of output file.                                                                     |
-| partials    | `string|string[]` | Path or array of paths relative to file to get partials from.                                                                             |
+| Name        | Type              | Description                                                                                                                                         |
+| ----------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| context     | `string|string[]` | js, ts, JSON5 or YAML file names or array of file names get context data for template. File name without extension is used as key in context data. |
+| rootContext | `string|string[]` | js, ts, JSON5 or YAML file name or array of file names to get context data for template. Result is merged into context directly.                  |
+| extension   | `string`          | If there is no out attribute, sets filename extension of output file.                                                                               |
+| partials    | `string|string[]` | Path or array of paths relative to file to get partials from.                                                                                       |
 
 ### Example
 
@@ -139,8 +139,8 @@ extension: "md"
 | `--target-extension <extension>`  | File extension to be used in generated files. If template file has 'extension' meta data (frontmatter), extension in meta data has higher precedence. |
 | `--out <path>`                    | File path (for templates) or directory path (for directory input) to generate files into. Defaults to \<template path>.                               |
 | `--context <json5>`               | Data to be passed to templates.                                                                                                                       |
-| `--context-files <paths>`         | Files to get data to be passed to templates under a key same as file name.                                                                            |
-| `--root-context-files`            | Files to get data to be passed to templates.                                                                                                          |
+| `--context-files <paths>`         | js, ts, JSON5 or YAML files to get data to be passed to templates under a key same as file name.                                                                            |
+| `--root-context-files`            | js, ts, JSON5 or YAML files to get data to be passed to templates.                                                                                                          |
 | `--partial-dirs <paths csv>`      | Paths of directories which contains partial files.                                                                                                    |
 | `--exclude-paths <paths csv>`     | Paths to be excluded (for directory input only)                                                                                                       |
 | `--engine <engine name>`          | Template engine to be used. Supports engines supported by [consolidate](https://www.npmjs.com/package/consolidate).                                    |

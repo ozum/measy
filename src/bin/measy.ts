@@ -51,8 +51,8 @@ Options
   --target-extension <extension>          - File extension to be used in generated files. If template file has 'extension' meta data (frontmatter), extension in meta data has higher precedence.
   --out <path>                            - File path (for templates) or directory path (for directory input) to generate files into. Defaults to <template path>.
   --context <json5>                       - Data to be passed to templates.
-  --context-files <paths>                 - Files to get data to be passed to templates under a key same as file name.
-  --root-context-files                    - Files to get data to be passed to templates.
+  --context-files <paths>                 - js, ts, JSON5 or YAML files to get data to be passed to templates under a key same as file name.
+  --root-context-files                    - js, ts, JSON5 or YAML files to get data to be passed to templates.
   --partial-dirs <paths csv>              - Paths of directories which contains partial files.
   --exclude-paths <paths csv>             - Paths to be excluded (for directory input only)
   --engine <engine name>                  - Template engine to be used. Supports engines supported by consolidate (https://www.npmjs.com/package/consolidate).

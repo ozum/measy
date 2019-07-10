@@ -1,6 +1,6 @@
-# measy
+# 
 
-Create files using any template engine as simple as possible. Just a template and a JSON file is enough.
+
 
 # Usage
 
@@ -27,10 +27,10 @@ $ yarn add measy
 $ measy README.njk
 ```
 
-- Long syntax without Front Matter:
+- Load data from `package.json` and `foo.yaml`
 
 ```
-$ measy --context-files package.json --out README.md README.njk
+$ measy --context-files package.json,foo.yaml --out README.md README.njk
 ```
 
 - Create a text file from handlebars template:
