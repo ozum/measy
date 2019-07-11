@@ -161,7 +161,7 @@ targetExtension: "md"
 
 `measy` allows you to use your own custom [handlebars helpers](http://handlebarsjs.com/#helpers) and [nunjucks filters](https://mozilla.github.io/nunjucks/api#custom-filters).
 
-Just export an object with names and functions from a JavaScript file.
+Either export functions directly or export an object with names and functions from a JavaScript file.
 
 You may add helpers/filters either using `--root-function-files` & `--function-files` CLI options or `rootFunctionFiles` & `functionFiles` front matter header in templates.
 
@@ -171,6 +171,15 @@ You may add helpers/filters either using `--root-function-files` & `--function-f
 export default {
   ucFirst: (input) => input.charAt(0).toUpperCase() + input.slice(1),
 }
+```
+
+**my-helper.js**
+
+```ts
+export function ucFirst(input) {
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
 ```
 
 ### Using Helpers/Filters with Front Matter

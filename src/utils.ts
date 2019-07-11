@@ -58,12 +58,12 @@ export function replaceExtension(path: string, newExtension: string = ""): strin
  */
 export async function getFilePathsRecursively(
   dirs: string | string[],
-  { extensions, ignore, returnRelative }: { extensions?: string | string[]; ignore?: string | string[]; returnRelative?: boolean }
+  { extensions, ignore, returnRelative }: { extensions?: string | string[]; ignore?: string | string[]; returnRelative?: boolean } = {}
 ): Promise<string[]> {
-  const extensionPattern = extensions ? `{${arrify(extensions).join(",")}}` : "*"; // i.e. {md,js}
+  const extensionPattern = extensions ? `.{${arrify(extensions).join(",")}}` : "*"; // i.e. {md,js}
   const allPaths = await Promise.all(
     arrify(dirs).map(async dir => {
-      const paths = await globby([`**/*.${extensionPattern}`], { cwd: dir, ignore: arrify(ignore) });
+      const paths = await globby([`**/*${extensionPattern}`], { cwd: dir, ignore: arrify(ignore) });
       return returnRelative ? paths : paths.map(path => join(dir, path));
     })
   );

@@ -81,7 +81,7 @@ export async function render(options: RenderOptions): Promise<string> {
     Object.keys(functions).forEach(name => Handlebars.registerHelper(name, functions[name]));
     consolidate.requires.handlebars = Handlebars;
     // Clone value! because consolidate.renderer modifies it, and since getPartialFiles is memozied, it's original value is modified for consecutive calls.
-    partials = { ...(await getPartialFiles(partialDirs, templateExtension)) };
+    partials = { ...(await getPartialFiles(partialDirs)) };
   } else if (!consolidate[engine]) {
     throw new Error(`No engine provided or unknown engine: ${engine}`);
   }

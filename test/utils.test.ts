@@ -24,6 +24,11 @@ describe("utils", () => {
       const files = await getFilePathsRecursively(join(__dirname, "test-helper/scan-folder"), { returnRelative: true });
       expect(files).toEqual(["sub/file.txt"]);
     });
+
+    it("should return files' without options.", async () => {
+      const files = await getFilePathsRecursively(join(__dirname, "test-helper/scan-folder"));
+      expect(files).toEqual([join(__dirname, "test-helper/scan-folder/sub/file.txt")]);
+    });
   });
 
   describe("getTemplateFilesFromDir", () => {

@@ -12,7 +12,7 @@ import { arrify, getFilePathsRecursively, replaceExtension } from "../utils";
  * @example
  * getPartialFiles("/some/path/partials", "hbs"); // { "main": "/some/path/partials/main.hbs", "top/box": "/some/path/partials/top/box.hbs" }
  */
-async function getPartialFiles(partialDirs: string | string[], templateExtension: string): Promise<Record<string, string>> {
+async function getPartialFiles(partialDirs: string | string[], templateExtension?: string): Promise<Record<string, string>> {
   const itemsByDir = await Promise.all(
     arrify(partialDirs).map(async partialDir => {
       const items = await getFilePathsRecursively(partialDir, { extensions: templateExtension });
