@@ -28,7 +28,15 @@ const EXTENSION_ENGINES: Record<string, keyof typeof consolidate> = {
   mustache: "mustache",
 };
 
-export const supportedEngines = Object.keys(consolidate);
+/**
+ * Returns whether template engine is supported.
+ *
+ * @param engineName is name of the template engine to check support for.
+ * @returns whether engine is supported.
+ */
+export function isEngineSupported(engineName: string): boolean {
+  return consolidate[engineName as keyof typeof consolidate] !== undefined;
+}
 
 /**
  * Renders and returns given template.

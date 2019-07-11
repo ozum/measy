@@ -3,7 +3,7 @@ import { join, normalize } from "path";
 import { compare } from "dir-compare";
 import del from "del";
 import execa from "execa";
-import { write, writeDir, render } from "../src/index";
+import { write, writeDir, render, isEngineSupported } from "../src/index";
 
 const { readFile } = fs.promises;
 
@@ -17,6 +17,16 @@ afterAll(async () => {
   await del(join(__dirname, "test-helper/temp-out"));
   await del(join(__dirname, "test-helper/temp-measy-out"));
   await del(join(__dirname, "test-helper/handlebars/sub-dir-template/hello"));
+});
+
+describe("isEngineSupported", () => {
+  it("should return true for supported engine", () => {
+    expect(isEngineSupported("nunjucks")).toBe(true);
+  });
+
+  it("should return false for unsupported engine", () => {
+    expect(isEngineSupported("xyz")).toBe(false);
+  });
 });
 
 describe("render", () => {
