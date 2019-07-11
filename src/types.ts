@@ -20,6 +20,11 @@ export interface MetaData {
   functions: Record<string, (...args: any[]) => any>;
 }
 
+/**
+ * Type for supported engines as a string.
+ */
+export type SupportedEngine = keyof typeof consolidate;
+
 export interface WriteOptions {
   /**
    * File to be created using `file` template.

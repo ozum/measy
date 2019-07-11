@@ -28,6 +28,8 @@ const extensionEngines: Record<string, keyof typeof consolidate> = {
   mustache: "mustache",
 };
 
+export { SupportedEngine } from "./types";
+
 /**
  * Returns engine for an extension. Not all extension/engine pairs can be mapped, because some engines may not have
  * file extensions and some engines shares same extension such as `html`.
