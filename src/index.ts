@@ -28,6 +28,8 @@ const EXTENSION_ENGINES: Record<string, keyof typeof consolidate> = {
   mustache: "mustache",
 };
 
+export const supportedEngines = Object.keys(consolidate);
+
 /**
  * Renders and returns given template.
  *
