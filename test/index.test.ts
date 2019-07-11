@@ -20,22 +20,34 @@ afterAll(async () => {
 });
 
 describe("engineOfExtension", () => {
-  it("should return engine for known extension", () => {
+  it("should return engine for known extension.", () => {
     expect(engineOfExtension("hbs")).toBe("handlebars");
   });
 
-  it("should return engine for known extension with dot", () => {
+  it("should return engine for known extension with dot.", () => {
     expect(engineOfExtension(".hbs")).toBe("handlebars");
+  });
+
+  it("should return undefined for empty.", () => {
+    expect(engineOfExtension()).toBe(undefined);
+  });
+
+  it("should return undefined for unknown extension.", () => {
+    expect(engineOfExtension("xyz")).toBe(undefined);
   });
 });
 
 describe("isEngineSupported", () => {
-  it("should return true for supported engine", () => {
+  it("should return true for supported engine.", () => {
     expect(isEngineSupported("nunjucks")).toBe(true);
   });
 
-  it("should return false for unsupported engine", () => {
+  it("should return false for unsupported engine.", () => {
     expect(isEngineSupported("xyz")).toBe(false);
+  });
+
+  it("should return false if no engine provided.", () => {
+    expect(isEngineSupported()).toBe(false);
   });
 });
 
