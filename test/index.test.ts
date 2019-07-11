@@ -3,7 +3,7 @@ import { join, normalize } from "path";
 import { compare } from "dir-compare";
 import del from "del";
 import execa from "execa";
-import { write, writeDir, render, isEngineSupported } from "../src/index";
+import { write, writeDir, render, isEngineSupported, engineOfExtension } from "../src/index";
 
 const { readFile } = fs.promises;
 
@@ -17,6 +17,16 @@ afterAll(async () => {
   await del(join(__dirname, "test-helper/temp-out"));
   await del(join(__dirname, "test-helper/temp-measy-out"));
   await del(join(__dirname, "test-helper/handlebars/sub-dir-template/hello"));
+});
+
+describe("engineOfExtension", () => {
+  it("should return engine for known extension", () => {
+    expect(engineOfExtension("hbs")).toBe("handlebars");
+  });
+
+  it("should return engine for known extension with dot", () => {
+    expect(engineOfExtension(".hbs")).toBe("handlebars");
+  });
 });
 
 describe("isEngineSupported", () => {

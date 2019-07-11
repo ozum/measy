@@ -21,12 +21,27 @@ const { writeFile } = fs.promises;
 /**
  * @ignore
  */
-const EXTENSION_ENGINES: Record<string, keyof typeof consolidate> = {
+const extensionEngines: Record<string, keyof typeof consolidate> = {
   njk: "nunjucks",
   hbs: "handlebars",
   handlebars: "handlebars",
   mustache: "mustache",
 };
+
+/**
+ * Returns engine for an extension. Not all extension/engine pairs can be mapped, because some engines may not have
+ * file extensions and some engines shares same extension such as `html`.
+ *
+ * @param extension is extension to check.
+ * @returns engine for given `extension`.
+ * @example
+ * engineOfExtension(".hbs"); // "handlebars"
+ * engineOfExtension("hbs"); // "handlebars"
+ */
+export function engineOfExtension(extension: string): keyof typeof consolidate | undefined {
+  const extensionWithoutDot = extension.startsWith(".") ? extension.slice(1) : extension;
+  return extensionEngines[extensionWithoutDot];
+}
 
 /**
  * Returns whether template engine is supported.
@@ -47,7 +62,7 @@ export function isEngineSupported(engineName: string): boolean {
 export async function render(options: RenderOptions): Promise<string> {
   const meta = await processMetaDataFromFile(options.template);
   const context = { ...meta.context, ...options.context, cache: true };
-  const engine = options.engine || EXTENSION_ENGINES[extname(options.template).slice(1)];
+  const engine = options.engine || extensionEngines[extname(options.template).slice(1)];
   const partialDirs = meta.partialDirs.concat(arrify(options.partialDirs));
   const templateExtension = extname(options.template).slice(1);
   const contextFromFiles = options.contextFiles ? await readContext(options.contextFiles) : {};
@@ -166,7 +181,7 @@ export async function writeDir(
     functionFiles,
     rootFunctionFiles,
     excludePaths = [],
-    engine = EXTENSION_ENGINES[templateExtension],
+    engine = extensionEngines[templateExtension],
     includeMeta,
     silent,
   }: WriteDirOptions
