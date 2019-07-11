@@ -1,6 +1,23 @@
 # measy
 
-Create files using any template engine as simple as possible. Just a template and a JSON file is enough.
+Create files using any template engine as simple as possible. Just a template and a JSON/YAML file is enough.
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Usage](#usage)
+- [Install](#install)
+- [Examples](#examples)
+  - [CLI Example](#cli-example)
+  - [Template Example](#template-example)
+- [Details](#details)
+  - [Front Matter](#front-matter)
+  - [CLI Options](#cli-options)
+  - [Custom Helpers & Filters](#custom-helpers--filters)
+  - [Supported Template Engines](#supported-template-engines)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Usage
 
@@ -10,8 +27,6 @@ $ npx measy README.hbs
 
 # Install
 
-Install `measy` using `npm` or `yarn`.
-
 ```
 $ npm install measy
 $ yarn add measy
@@ -20,6 +35,8 @@ $ yarn add measy
 **NOTE**: If you wish to use template engines other than `nunjucks` or `handlebars`, you must install the engines you wish to use: Add them to your package.json dependencies or install globally.
 
 # Examples
+
+## CLI Example
 
 - Create README.md from nunjucks template using `package.json` data:
 
@@ -51,7 +68,7 @@ $ measy --out docs my-templates
 $ measy --help
 ```
 
-# Example Template
+## Template Example
 
 Templates support `Front Matter` data in YAML format.
 
@@ -59,8 +76,8 @@ Templates support `Front Matter` data in YAML format.
 
 ```hbs
 ---
-context: "package.json"
-extension: "md"
+contextFiles: "package.json"
+targetExtension: "md"
 ---
 # {{ package.name }}
 
@@ -71,7 +88,7 @@ extension: "md"
 ...some examples
 ```
 
-# Description
+# Details
 
 `measy` is simple command which creates files from templates combining data from JSON or JavaScript (or TypeScript with the help of `ts-node`) files. JSON files are parsed using [JSON5](https://json5.org/). JS files can be used by exporting an object with `module.exports` or `export default`.
 
@@ -81,20 +98,24 @@ Any template file may contain a `YAML` front matter block. Data is processed by 
 
 ```yaml
 ---
-context: "package.json"
-rootContext: ["some.json", "lib/my-data.js"]
-partials: ["templates/partials"]
-extension: "md"
+contextFiles: "package.json"
+rootContextFiles: ["some.json", "lib/my-data.js"]
+partialDirs: ["templates/partials"]
+functionFiles: "helper.js"
+rootFunctionFiles: "other-helper.js"
+targetExtension: "md"
 ---
 
 ```
 
-| Name        | Type              | Description                                                                                                                                         |
-| ----------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| context     | `string|string[]` | js, ts, JSON5 or YAML file names or array of file names get context data for template. File name without extension is used as key in context data. |
-| rootContext | `string|string[]` | js, ts, JSON5 or YAML file name or array of file names to get context data for template. Result is merged into context directly.                  |
-| extension   | `string`          | If there is no out attribute, sets filename extension of output file.                                                                               |
-| partials    | `string|string[]` | Path or array of paths relative to file to get partials from.                                                                                       |
+| Name              | Type              | Description                                                                                                                                        |
+| ----------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| contextFiles      | `string|string[]` | js, ts, JSON5 or YAML file names or array of file names get context data for template. File name without extension is used as key in context data. |
+| rootContextFiles  | `string|string[]` | js, ts, JSON5 or YAML file name or array of file names to get context data for template. Result is merged into context directly.                   |
+| targetExtension   | `string`          | If there is no out attribute, sets filename extension of output file.                                                                              |
+| functionFiles     | `string|string[]` |  Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "helperUc" helper/filter.               |
+| rootFunctionFiles | `string|string[]` | Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "uc" helper/filter.                      |
+| partialDirs       | `string|string[]` | Path or array of paths relative to file to get partials from.                                                                                      |
 
 ### Example
 
@@ -108,7 +129,7 @@ extension: "md"
 ```
 
 ```js
-// context: "package.json"
+// contextFiles: "package.json"
 {
   someOtherData: "Hello",
   package: {
@@ -117,7 +138,7 @@ extension: "md"
   }
 }
 
-// rootContext: "package.json"
+// rootContextFiles: "package.json"
 {
   someOtherData: "Hello",
   name: "some-module",
@@ -128,20 +149,80 @@ extension: "md"
 
 ## CLI Options
 
-| Option Name                       | Description                                                                                                                                           |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--template-extension (Required)` | File extension of the templates.                                                                                                                      |
-| `--target-extension <extension>`  | File extension to be used in generated files. If template file has 'extension' meta data (frontmatter), extension in meta data has higher precedence. |
-| `--out <path>`                    | File path (for templates) or directory path (for directory input) to generate files into. Defaults to \<template path>.                               |
-| `--context <json5>`               | Data to be passed to templates.                                                                                                                       |
-| `--context-files <paths>`         | js, ts, JSON5 or YAML files to get data to be passed to templates under a key same as file name.                                                                            |
-| `--root-context-files`            | js, ts, JSON5 or YAML files to get data to be passed to templates.                                                                                                          |
-| `--partial-dirs <paths csv>`      | Paths of directories which contains partial files.                                                                                                    |
-| `--exclude-paths <paths csv>`     | Paths to be excluded (for directory input only)                                                                                                       |
-| `--engine <engine name>`          | Template engine to be used. Supports engines supported by [consolidate](https://www.npmjs.com/package/consolidate).                                    |
-| `--include-meta`                  | Whether to include meta data in generated files.                                                                                                      |
-| `--debug`                         | Print stack trace in errors.                                                                                                                          |
-| `--silence`                       | Prevent console output.                                                                                                                               |
+| Option Name                         | Description                                                                                                                                           |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--template-extension (Required)`   | File extension of the templates.                                                                                                                      |
+| `--target-extension <extension>`    | File extension to be used in generated files. If template file has 'extension' meta data (frontmatter), extension in meta data has higher precedence. |
+| `--out <path>`                      | File path (for templates) or directory path (for directory input) to generate files into. Defaults to \<template path>.                               |
+| `--context <json5>`                 | Data to be passed to templates.                                                                                                                       |
+| `--context-files <paths>`           | js, ts, JSON5 or YAML files to get data to be passed to templates under a key same as file name.                                                      |
+| `--root-context-files`              | js, ts, JSON5 or YAML files to get data to be passed to templates.                                                                                    |
+| `--partial-dirs <paths csv>`        | Paths of directories which contains partial files.                                                                                                    |
+| `--function-files <paths csv>`      | Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "helperUc" helper/filter.                   |
+| `--root-function-files <paths csv>` | Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "uc" helper/filter.                         |
+| `--exclude-paths <paths csv>`       | Paths to be excluded (for directory input only)                                                                                                       |
+| `--engine <engine name>`            | Template engine to be used. Supports engines supported by [consolidate](https://www.npmjs.com/package/consolidate).                                   |
+| `--include-meta`                    | Whether to include meta data in generated files.                                                                                                      |
+| `--debug`                           | Print stack trace in errors.                                                                                                                          |
+| `--silence`                         | Prevent console output.                                                                                                                               |
+
+## Custom Helpers & Filters
+
+`measy` allows you to use your own custom [handlebars helpers](http://handlebarsjs.com/#helpers) and [nunjucks filters](https://mozilla.github.io/nunjucks/api#custom-filters).
+
+Just export an object with names and functions from a JavaScript file.
+
+You may add helpers/filters either using `--root-function-files` & `--function-files` CLI options or `rootFunctionFiles` & `functionFiles` front matter header in templates.
+
+**my-helper.js**
+
+```ts
+export default {
+  ucFirst: (input) => input.charAt(0).toUpperCase() + input.slice(1),
+}
+```
+
+### Using Helpers/Filters with Front Matter
+
+```
+$ measy README.njk
+```
+
+**README.njk**
+
+```nunjucks
+---
+rootFunctionFiles: "my-helper.js"
+---
+Hello {{  firstName | ucFirst  }}
+```
+
+**README.hbs**
+
+```handlebars
+---
+rootFunctionFiles: "my-helper.js"
+---
+Hello {{  ucFirst firstName  }}
+```
+
+### Using Helpers/Filters with Front Matter
+
+```
+$ measy --root-function-files my-helper.js README.njk
+```
+
+**README.njk**
+
+```nunjucks
+Hello {{  firstName | ucFirst  }}
+```
+
+**README.hbs**
+
+```handlebars
+Hello {{  ucFirst firstName  }}
+```
 
 ## Supported Template Engines
 

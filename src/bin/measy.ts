@@ -18,6 +18,8 @@ interface Result extends meow.Result {
     contextFiles: string;
     rootContextFiles: string;
     partialDirs: string;
+    functionFiles: string;
+    rootFunctionFiles: string;
     excludePaths: string;
     engine: string;
     includeMeta: boolean;
@@ -35,6 +37,8 @@ const FLAGS: meowOptions["flags"] = {
   contextFiles: { type: "string", default: "" },
   rootContextFiles: { type: "string", default: "" },
   partialDirs: { type: "string", default: "" },
+  functionFiles: { type: "string", default: "" },
+  rootFunctionFiles: { type: "string", default: "" },
   excludePaths: { type: "string", default: "" },
   engine: { type: "string" },
   includeMeta: { type: "boolean" },
@@ -54,6 +58,8 @@ Options
   --context-files <paths>                 - js, ts, JSON5 or YAML files to get data to be passed to templates under a key same as file name.
   --root-context-files                    - js, ts, JSON5 or YAML files to get data to be passed to templates.
   --partial-dirs <paths csv>              - Paths of directories which contains partial files.
+  --function-files <paths csv>            - Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "helperUc" helper/filter.
+  --root-function-files <paths csv>       - Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "uc" helper/filter.
   --exclude-paths <paths csv>             - Paths to be excluded (for directory input only)
   --engine <engine name>                  - Template engine to be used. Supports engines supported by consolidate (https://www.npmjs.com/package/consolidate).
   --include-meta                          - Whether to include meta data in generated files.
@@ -92,6 +98,8 @@ async function measy(): Promise<void> {
     rootContextFiles: splitPaths(cli.flags.rootContextFiles),
     partialDirs: splitPaths(cli.flags.partialDirs),
     excludePaths: splitPaths(cli.flags.excludePaths),
+    functionFiles: splitPaths(cli.flags.functionFiles),
+    rootFunctionFiles: splitPaths(cli.flags.rootFunctionFiles),
   };
 
   try {

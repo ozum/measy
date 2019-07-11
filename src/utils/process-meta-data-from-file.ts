@@ -2,7 +2,7 @@ import memoize from "mem";
 import frontMatter from "front-matter";
 import fs from "fs";
 import { join, dirname } from "path";
-import { arrify, readContext, toAbsolute } from "../utils";
+import { arrify, readContext, toAbsolute, getFunctions } from "../utils";
 import { MetaData } from "../types";
 
 const { readFile } = fs.promises;
@@ -13,10 +13,12 @@ const { readFile } = fs.promises;
  * - calculates absolute `partialDirs`
  *
  * YAML attributes are as follows:
- * `context` is file name or array of file names to require to get context data for template. File name without extension is used as key.
- * `rootContext` is file name or array of file names to require to get context data for template. Result is merged into context directly.
- * `partials` is path or array of paths relative to file to get partials from.
- * `extension` is used if there is no out attribute. Sets filename extension of output file.
+ * `contextFiles` are file name or array of file names to require to get context data for template. File name without extension is used as key.
+ * `rootContextFiles` are file name or array of file names to require to get context data for template. Result is merged into context directly.
+ * `partialDirs` are path or array of paths relative to file to get partials from.
+ * `targetExtension` is used if there is no out attribute. Sets filename extension of output file.
+ * `functionFiles` are files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "helperUc" helper/filter.
+ * `rootFunctionFiles` are files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "uc" helper/filter.
  * For example assuming `data.json` has `{ "option": "red" }`
  *
  * ```
@@ -40,13 +42,17 @@ async function processMetaDataFromFile(file: string): Promise<MetaData> {
   const content = await readFile(file, { encoding: "utf8" });
   const { attributes, body } = frontMatter(content);
   const result: MetaData = {
-    partialDirs: attributes.partials ? arrify(attributes.partials).map(partial => join(dirname(file), partial)) : [],
+    partialDirs: attributes.partialDirs ? arrify(attributes.partialDirs).map(partial => join(dirname(file), partial)) : [],
     context: {
-      ...(await readContext(toAbsolute(file, attributes.context), false)),
-      ...(await readContext(toAbsolute(file, attributes.rootContext), true)),
+      ...(await readContext(toAbsolute(file, attributes.contextFiles), false)),
+      ...(await readContext(toAbsolute(file, attributes.rootContextFiles), true)),
+    },
+    functions: {
+      ...getFunctions(toAbsolute(file, attributes.functionFiles), false),
+      ...getFunctions(toAbsolute(file, attributes.rootFunctionFiles), true),
     },
     body,
-    extension: attributes.extension,
+    targetExtension: attributes.targetExtension,
   };
   return result;
 }

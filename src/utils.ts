@@ -4,8 +4,9 @@ import processMetaDataFromFile from "./utils/process-meta-data-from-file";
 import readContext from "./utils/read-context";
 import requireContextSource from "./utils/require-context-source";
 import getPartialFiles from "./utils/get-partial-files";
+import getFunctions from "./utils/get-functions";
 
-export { processMetaDataFromFile, readContext, requireContextSource, getPartialFiles };
+export { processMetaDataFromFile, readContext, requireContextSource, getPartialFiles, getFunctions };
 
 /**
  * Makes given input array and returns it.
@@ -120,4 +121,14 @@ export async function getTemplateFilesFromDir({
   });
 
   return { templateFiles, allPartialDirs: distinctPartialDirs.map(partialDir => join(dir, partialDir)) };
+}
+
+/**
+ * Returns given `input`s first character converted to uppercase.
+ *
+ * @param input string to convert first character to uppercase.
+ * @returns converted string.
+ */
+export function ucFirst(input: string): string {
+  return input.charAt(0).toUpperCase() + input.slice(1);
 }

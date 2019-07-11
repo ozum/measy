@@ -1,11 +1,20 @@
 import consolidate from "consolidate";
-import nunjucks from "nunjucks"; // eslint-disable-line import/no-extraneous-dependencies
+import nunjucks from "nunjucks";
+import Handlebars from "handlebars";
 import { join, extname, relative, dirname } from "path";
 import fs from "fs";
 import makeDir from "make-dir";
 import frontMatter from "front-matter";
 import { RenderOptions, WriteOptions, WriteDirOptions } from "./types";
-import { getPartialFiles, getTemplateFilesFromDir, processMetaDataFromFile, replaceExtension, readContext, arrify } from "./utils";
+import {
+  getPartialFiles,
+  getTemplateFilesFromDir,
+  processMetaDataFromFile,
+  replaceExtension,
+  readContext,
+  arrify,
+  getFunctions,
+} from "./utils";
 
 const { writeFile } = fs.promises;
 
@@ -15,6 +24,7 @@ const { writeFile } = fs.promises;
 const EXTENSION_ENGINES: Record<string, keyof typeof consolidate> = {
   njk: "nunjucks",
   hbs: "handlebars",
+  handlebars: "handlebars",
   mustache: "mustache",
 };
 
@@ -32,12 +42,18 @@ export async function render(options: RenderOptions): Promise<string> {
   const templateExtension = extname(options.template).slice(1);
   const contextFromFiles = options.contextFiles ? await readContext(options.contextFiles) : {};
   const rootContextFromFiles = options.rootContextFiles ? await readContext(options.rootContextFiles, true) : {};
+  const functions = { ...meta.functions, ...getFunctions(options.functionFiles, false), ...getFunctions(options.rootFunctionFiles, true) };
+
   let partials: Record<string, string> = {};
 
   if (engine === "nunjucks") {
-    consolidate.requires.nunjucks = nunjucks.configure(partialDirs);
+    const nunjucksEnv = nunjucks.configure(partialDirs);
+    consolidate.requires.nunjucks = nunjucksEnv;
+    Object.keys(functions).forEach(name => nunjucksEnv.addFilter(name, functions[name]));
   } else if (engine === "handlebars") {
-    // Clone value! because consolidate.renderer modifies it, and since getPartialFiles is memozied, it's original value is modified for conscutive calls.
+    Object.keys(functions).forEach(name => Handlebars.registerHelper(name, functions[name]));
+    consolidate.requires.handlebars = Handlebars;
+    // Clone value! because consolidate.renderer modifies it, and since getPartialFiles is memozied, it's original value is modified for consecutive calls.
     partials = { ...(await getPartialFiles(partialDirs, templateExtension)) };
   } else if (!consolidate[engine]) {
     throw new Error(`No engine provided or unknown engine: ${engine}`);
@@ -63,15 +79,36 @@ export async function render(options: RenderOptions): Promise<string> {
  */
 export async function write(
   templates: string | string[],
-  { out, context, contextFiles, rootContextFiles, partialDirs = [], engine, includeMeta, silent }: WriteOptions = {}
+  {
+    out,
+    context,
+    contextFiles,
+    rootContextFiles,
+    partialDirs = [],
+    functionFiles,
+    rootFunctionFiles,
+    engine,
+    includeMeta,
+    silent,
+  }: WriteOptions = {}
 ): Promise<void[]> {
   return Promise.all(
     arrify(templates).map(
       async (template: string): Promise<void> => {
         try {
           const meta = await processMetaDataFromFile(template);
-          const targetFile = out || replaceExtension(template, meta.extension);
-          const content = await render({ template, context, contextFiles, rootContextFiles, partialDirs, engine, includeMeta });
+          const targetFile = out || replaceExtension(template, meta.targetExtension);
+          const content = await render({
+            template,
+            context,
+            contextFiles,
+            rootContextFiles,
+            partialDirs,
+            functionFiles,
+            rootFunctionFiles,
+            engine,
+            includeMeta,
+          });
           await makeDir(dirname(targetFile));
           /* istanbul ignore next */
           if (!silent) {
@@ -116,6 +153,8 @@ export async function writeDir(
     contextFiles,
     rootContextFiles,
     partialDirs = [],
+    functionFiles,
+    rootFunctionFiles,
     excludePaths = [],
     engine = EXTENSION_ENGINES[templateExtension],
     includeMeta,
@@ -123,12 +162,24 @@ export async function writeDir(
   }: WriteDirOptions
 ): Promise<void> {
   const { templateFiles } = await getTemplateFilesFromDir({ dir, templateExtension, partialDirs, excludePaths });
+
   await Promise.all(
     templateFiles.map(async template => {
       const meta = await processMetaDataFromFile(template);
-      const extension = meta.extension || targetExtension || "";
+      const extension = meta.targetExtension || targetExtension || "";
       const targetFile = replaceExtension(join(out, relative(dir, template)), extension);
-      await write(template, { out: targetFile, context, contextFiles, rootContextFiles, partialDirs, engine, includeMeta, silent });
+      await write(template, {
+        out: targetFile,
+        context,
+        contextFiles,
+        rootContextFiles,
+        partialDirs,
+        functionFiles,
+        rootFunctionFiles,
+        engine,
+        includeMeta,
+        silent,
+      });
     })
   );
 }

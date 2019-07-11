@@ -8,13 +8,16 @@ export interface RenderOptions {
   partialDirs?: string | string[];
   engine?: keyof typeof consolidate;
   includeMeta?: boolean;
+  functionFiles?: string | string[];
+  rootFunctionFiles?: string | string[];
 }
 
 export interface MetaData {
   body: string;
   context: Record<string, any>;
   partialDirs: string[];
-  extension?: string;
+  targetExtension?: string;
+  functions: Record<string, (...args: any[]) => any>;
 }
 
 export interface WriteOptions {
@@ -38,6 +41,14 @@ export interface WriteOptions {
    * Directories of partial files to be used.
    */
   partialDirs?: string | string[];
+  /**
+   * Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "helperUc" helper/filter.
+   */
+  functionFiles?: string | string[];
+  /**
+   * Files to get filter/helper functions prefixed with file name. i.e "uc()" func in "path/helper.js" becomes "uc" helper/filter.
+   */
+  rootFunctionFiles?: string | string[];
   /**
    * Template engine to be used.
    */

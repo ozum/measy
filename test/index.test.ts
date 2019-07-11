@@ -1,7 +1,8 @@
 import fs from "fs";
-import { join } from "path";
+import { join, normalize } from "path";
 import { compare } from "dir-compare";
 import del from "del";
+import execa from "execa";
 import { write, writeDir, render } from "../src/index";
 
 const { readFile } = fs.promises;
@@ -13,7 +14,8 @@ const getDifferenceOfDirs = (path1: string, path2: string): Promise<number> =>
   }).then(comparison => comparison.differences);
 
 afterAll(async () => {
-  // await del(join(__dirname, "test-helper/temp-out"));
+  await del(join(__dirname, "test-helper/temp-out"));
+  await del(join(__dirname, "test-helper/temp-measy-out"));
   await del(join(__dirname, "test-helper/handlebars/sub-dir-template/hello"));
 });
 
@@ -93,6 +95,28 @@ describe("render", () => {
       })
     ).rejects.toThrow("files are not supported");
   });
+
+  it("should render handlebars tempate with helpers/filters.", async () => {
+    const rendered = await render({
+      template: join(__dirname, "test-helper/handlebars/doc-with-helpers.hbs"),
+      // functionFiles: [join(__dirname, "test-helper/functions-js.js"), join(__dirname, "test-helper/functions-ts.ts")],
+      // rootFunctionFiles: [join(__dirname, "test-helper/functions-js.js"), join(__dirname, "test-helper/functions-ts.ts")],
+      functionFiles: join(__dirname, "test-helper/functions-ts.ts"),
+      rootFunctionFiles: join(__dirname, "test-helper/functions-ts.ts"),
+    });
+    const expected = await getExpected("doc-with-functions.txt");
+    expect(rendered).toBe(expected);
+  });
+
+  it("should render nunjucks tempate with helpers/filters.", async () => {
+    const rendered = await render({
+      template: join(__dirname, "test-helper/nunjucks/doc-with-filters.njk"),
+      functionFiles: join(__dirname, "test-helper/functions-ts.ts"),
+      rootFunctionFiles: join(__dirname, "test-helper/functions-ts.ts"),
+    });
+    const expected = await getExpected("doc-with-functions.txt");
+    expect(rendered).toBe(expected);
+  });
 });
 
 describe("write", () => {
@@ -116,6 +140,8 @@ describe("writeDir", () => {
       partialDirs: join(__dirname, "test-helper/handlebars/partials2"),
       contextFiles: join(__dirname, "test-helper/arg-context.json"),
       rootContextFiles: join(__dirname, "test-helper/arg-context.json"),
+      functionFiles: join(__dirname, "test-helper/functions-ts.ts"),
+      rootFunctionFiles: join(__dirname, "test-helper/functions-ts.ts"),
       silent: true,
     });
     const expected = await getDifferenceOfDirs("expected/handlebars-write-dir", "temp-out/handlebars");
@@ -128,6 +154,45 @@ describe("writeDir", () => {
       silent: true,
     });
     const expected = await getDifferenceOfDirs("expected/handlebars-same-dir", "handlebars/sub-dir-template");
+    expect(expected).toBe(0);
+  });
+});
+
+describe("measy", () => {
+  it("should write all templates in given dir to out dir.", async () => {
+    // await execa.node(join(__dirname, "../../src/bin/measy.ts"), ["test-helper/handlebars/sub-dir-template/hello.hbs"]);
+    // await (execa("ts-node", [join(__dirname, "../../src/bin/measy.ts")]).stdout as any).pipe(process.stdout);
+    const cwd = __dirname;
+    const measyScript = normalize("../src/bin/measy.ts");
+    const templateDir = normalize("test-helper/handlebars");
+
+    await execa(
+      "ts-node",
+      [
+        measyScript,
+        templateDir,
+        "--template-extension",
+        "hbs",
+        "--target-extension",
+        "md",
+        "--out",
+        normalize("test-helper/temp-measy-out/handlebars"),
+        "--partial-dirs",
+        normalize("test-helper/handlebars/partials2"),
+        "--context-files",
+        normalize("test-helper/arg-context.json"),
+        "--root-context-files",
+        normalize("test-helper/arg-context.json"),
+        "--function-files",
+        `${normalize("test-helper/functions-ts.ts")}`,
+        "--root-function-files",
+        `${normalize("test-helper/functions-ts.ts")}`,
+      ],
+      {
+        cwd,
+      }
+    );
+    const expected = await getDifferenceOfDirs("expected/handlebars-write-dir", "temp-measy-out/handlebars");
     expect(expected).toBe(0);
   });
 });

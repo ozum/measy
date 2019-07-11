@@ -39,6 +39,7 @@ describe("utils", () => {
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-complex.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-partials-without-meta.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-partials.hbs",
+          "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-with-helpers.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/partials2/basic2.hbs", // No meta-data provided and this dir is not added partial files using arg.
           "/Users/ozum/Development/measy/test/test-helper/handlebars/sub-dir-template/hello.hbs",
@@ -63,6 +64,7 @@ describe("utils", () => {
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-complex.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-partials-without-meta.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-partials.hbs",
+          "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-with-helpers.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/doc.hbs",
           "/Users/ozum/Development/measy/test/test-helper/handlebars/sub-dir-template/hello.hbs",
         ],
