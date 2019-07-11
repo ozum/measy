@@ -6,7 +6,7 @@ export interface RenderOptions {
   contextFiles?: string | string[];
   rootContextFiles?: string | string[];
   partialDirs?: string | string[];
-  engine?: keyof typeof consolidate;
+  engine?: SupportedEngine;
   includeMeta?: boolean;
   functionFiles?: string | string[];
   rootFunctionFiles?: string | string[];
@@ -57,7 +57,7 @@ export interface WriteOptions {
   /**
    * Template engine to be used.
    */
-  engine?: keyof typeof consolidate;
+  engine?: SupportedEngine;
   /**
    * Whether to include meta data (frontmatter) contained in tempates into created file.
    */

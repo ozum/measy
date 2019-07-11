@@ -5,7 +5,7 @@ import { join, extname, relative, dirname } from "path";
 import fs from "fs";
 import makeDir from "make-dir";
 import frontMatter from "front-matter";
-import { RenderOptions, WriteOptions, WriteDirOptions } from "./types";
+import { RenderOptions, WriteOptions, WriteDirOptions, SupportedEngine } from "./types";
 import {
   getPartialFiles,
   getTemplateFilesFromDir,
@@ -21,7 +21,7 @@ const { writeFile } = fs.promises;
 /**
  * @ignore
  */
-const extensionEngines: Record<string, keyof typeof consolidate> = {
+const extensionEngines: Record<string, SupportedEngine> = {
   njk: "nunjucks",
   hbs: "handlebars",
   handlebars: "handlebars",
@@ -40,7 +40,7 @@ export { SupportedEngine } from "./types";
  * engineOfExtension(".hbs"); // "handlebars"
  * engineOfExtension("hbs"); // "handlebars"
  */
-export function engineOfExtension(extension: string): keyof typeof consolidate | undefined {
+export function engineOfExtension(extension: string = ""): SupportedEngine | undefined {
   const extensionWithoutDot = extension.startsWith(".") ? extension.slice(1) : extension;
   return extensionEngines[extensionWithoutDot];
 }
@@ -51,8 +51,8 @@ export function engineOfExtension(extension: string): keyof typeof consolidate |
  * @param engineName is name of the template engine to check support for.
  * @returns whether engine is supported.
  */
-export function isEngineSupported(engineName: string): boolean {
-  return consolidate[engineName as keyof typeof consolidate] !== undefined;
+export function isEngineSupported(engineName: string = ""): boolean {
+  return consolidate[engineName as SupportedEngine] !== undefined;
 }
 
 /**
