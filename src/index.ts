@@ -66,7 +66,6 @@ export async function render(options: RenderOptions): Promise<string> {
   const context = { ...meta.context, ...options.context, cache: true };
   const engine = options.engine || extensionEngines[extname(options.template).slice(1)];
   const partialDirs = meta.partialDirs.concat(arrify(options.partialDirs));
-  const templateExtension = extname(options.template).slice(1);
   const contextFromFiles = options.contextFiles ? await readContext(options.contextFiles) : {};
   const rootContextFromFiles = options.rootContextFiles ? await readContext(options.rootContextFiles, true) : {};
   const functions = { ...meta.functions, ...getFunctions(options.functionFiles, false), ...getFunctions(options.rootFunctionFiles, true) };
