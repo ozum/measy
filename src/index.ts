@@ -40,7 +40,7 @@ export { SupportedEngine } from "./types";
  * engineOfExtension(".hbs"); // "handlebars"
  * engineOfExtension("hbs"); // "handlebars"
  */
-export function engineOfExtension(extension: string = ""): SupportedEngine | undefined {
+export function engineOfExtension(extension: string = ""): string | undefined {
   const extensionWithoutDot = extension.startsWith(".") ? extension.slice(1) : extension;
   return extensionEngines[extensionWithoutDot];
 }
