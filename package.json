@@ -3,11 +3,7 @@
   "label": "Measy",
   "version": "0.4.6",
   "description": "Create files using any template engine as simple as possible. Just a template and a JSON/YAML file is enough.",
-  "keywords": [
-    "template",
-    "generator",
-    "creator"
-  ],
+  "keywords": ["template", "generator", "creator"],
   "engines": {
     "node": ">=10.8.0"
   },
@@ -16,13 +12,7 @@
   "bin": {
     "measy": "dist/bin/measy.js"
   },
-  "files": [
-    "/bin",
-    "/lib/**/!(*.spec|*.test)*.*",
-    "/dist/**/!(*.spec|*.test)*.*",
-    "/@types",
-    "/module-files"
-  ],
+  "files": ["/bin", "/lib/**/!(*.spec|*.test)*.*", "/dist/**/!(*.spec|*.test)*.*", "/@types", "/module-files"],
   "scripts": {
     "build": "rm -rf dist && tsc",
     "docs:build": "ts-node src/bin/measy.ts README.njk && doctoc --maxlevel 2 README.md",
@@ -41,7 +31,6 @@
   },
   "homepage": "https://github.com/ozum/measy#readme",
   "devDependencies": {
-    "@types/consolidate": "^0.14.0",
     "@types/handlebars": "^4.1.0",
     "@types/jest": "^24.0.15",
     "@types/js-yaml": "^3.12.1",
@@ -72,6 +61,7 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
+    "@types/consolidate": "^0.14.0",
     "array-map-to-object": "0.0.3",
     "consolidate": "^0.15.1",
     "front-matter": "^3.0.2",
