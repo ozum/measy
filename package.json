@@ -1,9 +1,13 @@
 {
   "name": "measy",
   "label": "Measy",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Create files using any template engine as simple as possible. Just a template and a JSON/YAML file is enough.",
-  "keywords": ["template", "generator", "creator"],
+  "keywords": [
+    "template",
+    "generator",
+    "creator"
+  ],
   "engines": {
     "node": ">=10.8.0"
   },
@@ -12,7 +16,13 @@
   "bin": {
     "measy": "dist/bin/measy.js"
   },
-  "files": ["/bin", "/lib/**/!(*.spec|*.test)*.*", "/dist/**/!(*.spec|*.test)*.*", "/@types", "/module-files"],
+  "files": [
+    "/bin",
+    "/lib/**/!(*.spec|*.test)*.*",
+    "/dist/**/!(*.spec|*.test)*.*",
+    "/@types",
+    "/module-files"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc",
     "docs:build": "ts-node src/bin/measy.ts README.njk && doctoc --maxlevel 2 README.md",
