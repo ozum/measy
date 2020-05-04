@@ -1,5 +1,14 @@
 import consolidate from "consolidate";
 
+export interface FrontData {
+  contextFiles?: string | string[];
+  rootContextFiles?: string | string[];
+  partialDirs?: string | string[];
+  functionFiles?: string | string[];
+  rootFunctionFiles?: string | string[];
+  targetExtension?: string;
+}
+
 export interface RenderOptions {
   template: string;
   context?: Record<string, any>;

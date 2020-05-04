@@ -9,7 +9,7 @@ import { write, writeDir } from "../index";
 
 const { lstat } = fs.promises;
 
-interface Result extends meow.Result {
+interface Result extends meow.Result<any> {
   flags: {
     templateExtension: string;
     targetExtension: string;
@@ -29,7 +29,7 @@ interface Result extends meow.Result {
   };
 }
 
-const FLAGS: meowOptions["flags"] = {
+const FLAGS: meowOptions<any>["flags"] = {
   templateExtension: { type: "string" },
   targetExtension: { type: "string" },
   out: { type: "string" },

@@ -26,7 +26,7 @@ export function arrify<T>(input: T | T[] = []): T[] {
  * @returns aboslute paths.
  */
 export function toAbsolute(baseFile: string, paths: string | string[]): string[] {
-  return arrify(paths).map(path => join(dirname(baseFile), path));
+  return arrify(paths).map((path) => join(dirname(baseFile), path));
 }
 
 /**
@@ -36,10 +36,16 @@ export function toAbsolute(baseFile: string, paths: string | string[]): string[]
  * @param newExtension is extension to replace old one.
  * @returns path with new extension.
  */
-export function replaceExtension(path: string, newExtension: string = ""): string {
+export function replaceExtension(path: string, newExtension = ""): string {
   const newExtensionWithDot = newExtension === "" || newExtension.startsWith(".") ? newExtension : `.${newExtension}`;
   const { dir, name } = parse(path);
   return `${join(dir, name)}${newExtensionWithDot}`;
+}
+
+function getExtensionPattern(extensions?: string | string[]): string {
+  if (extensions === undefined) return "*";
+  const extensionsArray = arrify(extensions);
+  return extensionsArray.length > 1 ? `.{${extensionsArray.join(",")}}` : `.${extensionsArray[0]}`; // i.e. {md,js}
 }
 
 /**
@@ -60,11 +66,12 @@ export async function getFilePathsRecursively(
   dirs: string | string[],
   { extensions, ignore, returnRelative }: { extensions?: string | string[]; ignore?: string | string[]; returnRelative?: boolean } = {}
 ): Promise<string[]> {
-  const extensionPattern = extensions ? `.{${arrify(extensions).join(",")}}` : "*"; // i.e. {md,js}
+  const extensionPattern = getExtensionPattern(extensions); // i.e. md or .{md,js}
+
   const allPaths = await Promise.all(
-    arrify(dirs).map(async dir => {
+    arrify(dirs).map(async (dir) => {
       const paths = await globby([`**/*${extensionPattern}`], { cwd: dir, ignore: arrify(ignore) });
-      return returnRelative ? paths : paths.map(path => join(dir, path));
+      return returnRelative ? paths : paths.map((path) => join(dir, path));
     })
   );
   return allPaths.flat();
@@ -101,7 +108,7 @@ export async function getTemplateFilesFromDir({
 
   // Scan files to get partial dirs defined in meta data of template files.
   const partialDirsFromMeta = await Promise.all(
-    templateFilesIncludingPartials.map(async template => {
+    templateFilesIncludingPartials.map(async (template) => {
       const meta = await processMetaDataFromFile(template);
       return meta.partialDirs;
     })
@@ -110,7 +117,7 @@ export async function getTemplateFilesFromDir({
   const combinedRelativePartialDirs = partialDirsFromMeta
     .flat()
     .concat(partialDirs)
-    .map(partialDir => (isAbsolute(partialDir) ? relative(dir, partialDir) : partialDir));
+    .map((partialDir) => (isAbsolute(partialDir) ? relative(dir, partialDir) : partialDir));
 
   const distinctPartialDirs = Array.from(new Set(combinedRelativePartialDirs));
 
@@ -120,7 +127,7 @@ export async function getTemplateFilesFromDir({
     extensions: templateExtension,
   });
 
-  return { templateFiles, allPartialDirs: distinctPartialDirs.map(partialDir => join(dir, partialDir)) };
+  return { templateFiles, allPartialDirs: distinctPartialDirs.map((partialDir) => join(dir, partialDir)) };
 }
 
 /**

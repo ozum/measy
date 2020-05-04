@@ -1,4 +1,4 @@
-import memoize from "mem";
+import memoize from "fast-memoize";
 import { relative, extname } from "path";
 import JSON5 from "json5";
 import yaml from "js-yaml";
@@ -65,4 +65,4 @@ async function requireContextSource(source: string): Promise<Record<string, any>
   return context;
 }
 
-export default memoize(requireContextSource, { maxAge: 10000 });
+export default memoize(requireContextSource);

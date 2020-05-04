@@ -1,4 +1,4 @@
-import memoize from "mem";
+import memoize from "fast-memoize";
 import mapToObject from "array-map-to-object";
 import { relative } from "path";
 import { arrify, getFilePathsRecursively, replaceExtension } from "../utils";
@@ -14,13 +14,13 @@ import { arrify, getFilePathsRecursively, replaceExtension } from "../utils";
  */
 async function getPartialFiles(partialDirs: string | string[], templateExtension?: string): Promise<Record<string, string>> {
   const itemsByDir = await Promise.all(
-    arrify(partialDirs).map(async partialDir => {
+    arrify(partialDirs).map(async (partialDir) => {
       const items = await getFilePathsRecursively(partialDir, { extensions: templateExtension });
-      return mapToObject(items, item => [replaceExtension(relative(partialDir, item)), item]);
+      return mapToObject(items, (item) => [replaceExtension(relative(partialDir, item)), item]);
     })
   );
   // Join all objects into single object.
   return itemsByDir.reduce((cumulativeItems, currentItems) => ({ ...cumulativeItems, ...currentItems }), {});
 }
 
-export default memoize(getPartialFiles, { maxAge: 10000 });
+export default memoize(getPartialFiles);

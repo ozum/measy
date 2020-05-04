@@ -40,7 +40,7 @@ export { SupportedEngine } from "./types";
  * engineOfExtension(".hbs"); // "handlebars"
  * engineOfExtension("hbs"); // "handlebars"
  */
-export function engineOfExtension(extension: string = ""): SupportedEngine | undefined {
+export function engineOfExtension(extension = ""): SupportedEngine | undefined {
   const extensionWithoutDot = extension.startsWith(".") ? extension.slice(1) : extension;
   return extensionEngines[extensionWithoutDot];
 }
@@ -51,7 +51,7 @@ export function engineOfExtension(extension: string = ""): SupportedEngine | und
  * @param engineName is name of the template engine to check support for.
  * @returns whether engine is supported.
  */
-export function isEngineSupported(engineName: string = ""): boolean {
+export function isEngineSupported(engineName = ""): boolean {
   return consolidate[engineName as SupportedEngine] !== undefined;
 }
 
@@ -69,15 +69,14 @@ export async function render(options: RenderOptions): Promise<string> {
   const contextFromFiles = options.contextFiles ? await readContext(options.contextFiles) : {};
   const rootContextFromFiles = options.rootContextFiles ? await readContext(options.rootContextFiles, true) : {};
   const functions = { ...meta.functions, ...getFunctions(options.functionFiles, false), ...getFunctions(options.rootFunctionFiles, true) };
-
   let partials: Record<string, string> = {};
 
   if (engine === "nunjucks") {
     const nunjucksEnv = nunjucks.configure(partialDirs);
     consolidate.requires.nunjucks = nunjucksEnv;
-    Object.keys(functions).forEach(name => nunjucksEnv.addFilter(name, functions[name]));
+    Object.keys(functions).forEach((name) => nunjucksEnv.addFilter(name, functions[name]));
   } else if (engine === "handlebars") {
-    Object.keys(functions).forEach(name => Handlebars.registerHelper(name, functions[name]));
+    Object.keys(functions).forEach((name) => Handlebars.registerHelper(name, functions[name]));
     consolidate.requires.handlebars = Handlebars;
     // Clone value! because consolidate.renderer modifies it, and since getPartialFiles is memozied, it's original value is modified for consecutive calls.
     partials = { ...(await getPartialFiles(partialDirs)) };
@@ -86,7 +85,7 @@ export async function render(options: RenderOptions): Promise<string> {
   }
 
   const renderer = consolidate[engine] as typeof consolidate.nunjucks; // RendererInterface type is not exported from consolidate
-  return renderer(options.template, { partials, ...context, ...contextFromFiles, ...rootContextFromFiles }).then(content =>
+  return renderer(options.template, { partials, ...context, ...contextFromFiles, ...rootContextFromFiles }).then((content) =>
     options.includeMeta ? content : frontMatter(content).body
   );
 }
@@ -190,7 +189,7 @@ export async function writeDir(
   const { templateFiles } = await getTemplateFilesFromDir({ dir, templateExtension, partialDirs, excludePaths });
 
   await Promise.all(
-    templateFiles.map(async template => {
+    templateFiles.map(async (template) => {
       const meta = await processMetaDataFromFile(template);
       const extension = meta.targetExtension || targetExtension || "";
       const targetFile = replaceExtension(join(out, relative(dir, template)), extension);

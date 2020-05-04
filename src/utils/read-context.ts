@@ -1,4 +1,4 @@
-import memoize from "mem";
+import memoize from "fast-memoize";
 import { basename, extname } from "path";
 import camelCase from "lodash.camelcase";
 import { arrify, requireContextSource } from "../utils";
@@ -15,7 +15,7 @@ import { arrify, requireContextSource } from "../utils";
  */
 async function readContext(sources?: string | string[], isRootObject?: boolean): Promise<Record<string, any>> {
   const parsedSources = await Promise.all(
-    arrify(sources || []).map(async source => {
+    arrify(sources || []).map(async (source) => {
       const parsedSource = await requireContextSource(source);
       const key = camelCase(basename(source, extname(source)));
       return isRootObject ? parsedSource : { [key]: parsedSource };
@@ -24,4 +24,4 @@ async function readContext(sources?: string | string[], isRootObject?: boolean):
   return parsedSources.reduce((context, currentContext) => ({ ...context, ...currentContext }), {});
 }
 
-export default memoize(readContext, { maxAge: 10000 });
+export default memoize(readContext);

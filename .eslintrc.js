@@ -36,6 +36,7 @@ module.exports = {
     "no-underscore-dangle": "off",
     "@typescript-eslint/explicit-function-return-type": ["warn", { allowExpressions: true, allowTypedFunctionExpressions: true }],
     "@typescript-eslint/no-explicit-any": "off",
+    "import/extensions": "off",
   },
   overrides: [
     {

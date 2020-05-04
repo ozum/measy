@@ -1,9 +1,9 @@
-import memoize from "mem";
+import memoize from "fast-memoize";
 import frontMatter from "front-matter";
 import fs from "fs";
 import { join, dirname } from "path";
 import { arrify, readContext, toAbsolute, getFunctions } from "../utils";
-import { MetaData } from "../types";
+import { MetaData, FrontData } from "../types";
 
 const { readFile } = fs.promises;
 
@@ -38,18 +38,37 @@ const { readFile } = fs.promises;
  * @param file is file to process meta data for.
  * @returns processed data.
  */
+// async function processMetaDataFromFile(file: string): Promise<MetaData> {
+//   const content = await readFile(file, { encoding: "utf8" });
+//   const { attributes, body } = frontMatter(content);
+//   const result: MetaData = {
+//     partialDirs: attributes.partialDirs ? arrify(attributes.partialDirs).map(partial => join(dirname(file), partial)) : [],
+//     context: {
+//       ...(await readContext(toAbsolute(file, attributes.contextFiles), false)),
+//       ...(await readContext(toAbsolute(file, attributes.rootContextFiles), true)),
+//     },
+//     functions: {
+//       ...getFunctions(toAbsolute(file, attributes.functionFiles), false),
+//       ...getFunctions(toAbsolute(file, attributes.rootFunctionFiles), true),
+//     },
+//     body,
+//     targetExtension: attributes.targetExtension,
+//   };
+//   return result;
+// }
+
 async function processMetaDataFromFile(file: string): Promise<MetaData> {
   const content = await readFile(file, { encoding: "utf8" });
-  const { attributes, body } = frontMatter(content);
+  const { attributes, body } = frontMatter<FrontData>(content);
   const result: MetaData = {
-    partialDirs: attributes.partialDirs ? arrify(attributes.partialDirs).map(partial => join(dirname(file), partial)) : [],
+    partialDirs: attributes.partialDirs ? arrify(attributes.partialDirs).map((partial) => join(dirname(file), partial)) : [],
     context: {
-      ...(await readContext(toAbsolute(file, attributes.contextFiles), false)),
-      ...(await readContext(toAbsolute(file, attributes.rootContextFiles), true)),
+      ...(attributes.contextFiles ? await readContext(toAbsolute(file, attributes.contextFiles), false) : []),
+      ...(attributes.rootContextFiles ? await readContext(toAbsolute(file, attributes.rootContextFiles), true) : []),
     },
     functions: {
-      ...getFunctions(toAbsolute(file, attributes.functionFiles), false),
-      ...getFunctions(toAbsolute(file, attributes.rootFunctionFiles), true),
+      ...(attributes.functionFiles ? getFunctions(toAbsolute(file, attributes.functionFiles), false) : {}),
+      ...(attributes.rootFunctionFiles ? getFunctions(toAbsolute(file, attributes.rootFunctionFiles), true) : {}),
     },
     body,
     targetExtension: attributes.targetExtension,
@@ -57,4 +76,4 @@ async function processMetaDataFromFile(file: string): Promise<MetaData> {
   return result;
 }
 
-export default memoize(processMetaDataFromFile, { maxAge: 10000 });
+export default memoize(processMetaDataFromFile);

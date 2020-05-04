@@ -29,6 +29,25 @@ describe("utils", () => {
       const files = await getFilePathsRecursively(join(__dirname, "test-helper/scan-folder"));
       expect(files).toEqual([join(__dirname, "test-helper/scan-folder/sub/file.txt")]);
     });
+
+    it("should return files with multiple extensions.", async () => {
+      const expected = [
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-arg-context.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-complex.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-partials-without-meta.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-partials.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/doc-with-helpers.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/doc.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/partials/basic.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/partials/sub/deep.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/partials2/basic2.hbs",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/some-text.txt",
+        "/Users/ozum/Development/measy/test/test-helper/handlebars/sub-dir-template/hello.hbs",
+      ];
+
+      const files = await getFilePathsRecursively(join(__dirname, "test-helper/handlebars"), { extensions: ["hbs", "txt"] });
+      expect(files.sort()).toEqual(expected.sort());
+    });
   });
 
   describe("getTemplateFilesFromDir", () => {
