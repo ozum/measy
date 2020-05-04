@@ -79,7 +79,7 @@ Examples
  * @returns array of absolute paths converted from relative to cwd().
  */
 function splitPaths(pathsCSV: string): string[] {
-  return pathsCSV ? pathsCSV.split(/\s*,\s*/).map(f => resolve(f)) : [];
+  return pathsCSV ? pathsCSV.split(/\s*,\s*/).map((f) => resolve(f)) : [];
 }
 
 async function measy(): Promise<void> {
@@ -103,10 +103,10 @@ async function measy(): Promise<void> {
   };
 
   try {
-    const paths = cli.input.map(p => resolve(p));
+    const paths = cli.input.map((p) => resolve(p));
     const stat = await lstat(paths[0]);
     const isDirectory = stat.isDirectory();
-    const unknownOption = Object.keys(flags).find(key => FLAGS && !FLAGS[key]);
+    const unknownOption = Object.keys(flags).find((key) => FLAGS && !FLAGS[key]);
     if (unknownOption) {
       throw new Error(`Unknown option '${unknownOption}'`);
     }
