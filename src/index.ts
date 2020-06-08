@@ -85,6 +85,9 @@ export async function render(options: RenderOptions): Promise<string> {
   }
 
   const renderer = consolidate[engine] as typeof consolidate.nunjucks; // RendererInterface type is not exported from consolidate
+
+  // IMPORTANT: If below function does not return or even continue, please first try to remove API markdown created by TypeDoc from template.
+  // Some compatibility problem prevents template to be rendered.
   return renderer(options.template, { partials, ...context, ...contextFromFiles, ...rootContextFromFiles }).then((content) =>
     options.includeMeta ? content : frontMatter(content).body
   );
