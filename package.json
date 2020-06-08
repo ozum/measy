@@ -1,7 +1,7 @@
 {
   "name": "measy",
   "label": "Measy",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "Create files using any template engine as simple as possible. Just a template and a JSON/YAML file is enough.",
   "keywords": [
     "template",
